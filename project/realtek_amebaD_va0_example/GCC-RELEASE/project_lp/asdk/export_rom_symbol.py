@@ -21,11 +21,11 @@ command = readelf + " -W -s " + axf_file + " | sort -k 2";
 
 proc = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
 
-print >> file, "SECTIONS"
-print >> file, "{"
+print("SECTIONS", file=file)
+print("{", file=file)
 for line in proc.stdout:
 #	print line
-	items = filter(None, line.strip().split(' '))
+	items = list(filter(None, line.decode('ASCII').strip().split(' ')))
 
         num = len(items)
         if  num >= 8  :
@@ -34,9 +34,9 @@ for line in proc.stdout:
 	    	address = int(items[1], 16)
 		if address < gRamStart_pos and (address & gFlashStart_pos) == 0:
             		symbol = items[7]
-                	print >> file, "    " + symbol + " = " + hex(address) + ";";
+                	print("    " + symbol + " = " + hex(address) + ";", file=file)
                 	#print "    " + symbol + " = " + hex(address) + ";";
 
-print >> file, "}"
+print("}", file=file)
 
 file.close()
